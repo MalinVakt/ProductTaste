@@ -1,0 +1,7 @@
+id,title,description,reporter,created_at,labels,votes
+101,Push alerts arrive hours late on Android 15,"Since the 3.4 update, slippery-road push notifications on my Pixel 8 arrive 2-4 hours after the warning was issued. By then I've already driven to work. iOS colleague gets them on time.",anna.l,2026-11-20,"bug,android,notifications",14
+102,App crashes when opening map with location off,"Steps: disable location permission, open app, tap Map tab. App closes immediately. Reproducible every time on iOS 19.1.",jonas_dev,2026-11-22,"bug,ios,crash",6
+103,Wrong municipality shown for Upplands Väsby,"Warnings for Upplands Väsby are labelled as Sollentuna in the list view.",kristin,2026-11-18,"bug,data",2
+104,Dark mode text unreadable on settings page,"Grey text on dark grey background in Settings > Notifications. Hard to read.",mattias,2026-11-10,"bug,ui",3
+105,Android notifications delayed,"Getting ice warnings way too late on Samsung S24. Battery optimisation is off.",peter.s,2026-11-24,"bug,android",9
+106,Subscription renewal charged twice,"I was charged 49 kr twice on 2026-11-21 for my yearly Premium renewal. Receipt numbers attached in support ticket.",lena.b,2026-11-23,"bug,payments",4

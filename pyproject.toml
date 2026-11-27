@@ -1,0 +1,15 @@
+[project]
+name = "halkvakt-pm"
+version = "0.1.0"
+description = "PM triage agent for Halkvakt: ranks bugs, social comments and emails with a rationale."
+requires-python = ">=3.11"
+dependencies = ["anthropic>=2.14", "pydantic>=2.7"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+halkvakt-pm = "halkvakt_pm.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["halkvakt_pm*"]

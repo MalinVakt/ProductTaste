@@ -1,0 +1,77 @@
+# Copy to config.toml and edit. Paths are relative to this file.
+
+[product]
+name = "Halkvakt"
+# A couple of sentences so the agent understands what matters. Replace this.
+description = """
+Halkvakt is a consumer and business app that warns people about slippery roads
+and paths. Its core job is to deliver accurate, timely warnings before people
+travel. Revenue comes from Premium subscriptions and Business (fleet) plans.
+"""
+# Optional: standing priorities or rules the team wants applied when ranking.
+priorities = """
+- Anything that makes warnings late or wrong breaks the core job; treat it as severe.
+- Payment problems are P1 or higher.
+- Business-plan customers outweigh free users when other factors are equal.
+"""
+
+[agent]
+model = "claude-opus-5-5"
+effort = "high"      # low | medium | high | xhigh | max
+max_items = 300      # cap per run to bound cost
+
+# ---- Sources ---------------------------------------------------------------
+# Each [[sources]] block is one plug-in. Set enabled = false to skip one.
+
+[[sources]]
+name = "bugs"
+type = "csv"
+channel = "bug_tracker"
+path = "sample_data/bugs.csv"
+fields = { text = "description", author = "reporter" }
+meta = ["labels", "votes"]
+
+[[sources]]
+name = "social"
+type = "json"
+channel = "social"
+path = "sample_data/social.json"
+items_key = "items"
+fields = { author = "user.handle" }
+meta = ["platform", "likes", "reposts"]
+
+[[sources]]
+name = "support-email"
+type = "email"
+eml_dir = "sample_data/emails"
+max_messages = 200
+
+# ---- Live sources: Halkvakt uses Instagram/Facebook and Zoho Mail ---------
+# Fill in the IDs, set the env vars (see README), and flip enabled = true.
+# You can then disable the sample sources above.
+
+[[sources]]
+name = "meta"
+type = "meta"
+enabled = false
+facebook_page_id = "YOUR_PAGE_ID"
+instagram_user_id = "YOUR_IG_BUSINESS_ACCOUNT_ID"
+token_env = "META_ACCESS_TOKEN"
+max_posts = 25
+since_days = 14
+
+[[sources]]
+name = "zoho"
+type = "email"
+enabled = false
+max_messages = 200
+# Zoho Mail over IMAP. Host: imap.zoho.com (personal), imappro.zoho.com
+# (organisation accounts), or imap.zoho.eu / imappro.zoho.eu for EU data centre.
+imap = { host = "imappro.zoho.eu", user = "support@halkvakt.se", folder = "INBOX", since_days = 14, password_env = "ZOHO_APP_PASSWORD" }
+
+# [[sources]]
+# name = "gh"
+# type = "github_issues"
+# repo = "owner/halkvakt"
+# state = "open"
+# max_issues = 100

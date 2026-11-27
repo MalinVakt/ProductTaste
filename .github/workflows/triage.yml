@@ -1,0 +1,29 @@
+# Runs the triage agent and uploads the report as a build artifact.
+# Needs the repository secret ANTHROPIC_API_KEY. Uncomment `schedule` for a
+# weekly Monday-morning run once real sources are configured in config.toml.
+name: Halkvakt feedback triage
+
+on:
+  workflow_dispatch:
+  # schedule:
+  #   - cron: "0 6 * * 1"   # Mondays 06:00 UTC
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: mkdir -p reports && python -m halkvakt_pm --config config.toml --out reports/triage.md
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          ZOHO_APP_PASSWORD: ${{ secrets.ZOHO_APP_PASSWORD }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: triage-report
+          path: reports/triage.md
