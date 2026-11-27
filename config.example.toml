@@ -44,9 +44,30 @@ meta = ["platform", "likes", "reposts"]
 name = "support-email"
 type = "email"
 eml_dir = "sample_data/emails"
-# mbox = "exports/support.mbox"
-# imap = { host = "imap.gmail.com", user = "support@halkvakt.se", folder = "INBOX", since_days = 14, password_env = "HALKVAKT_IMAP_PASSWORD" }
 max_messages = 200
+
+# ---- Live sources: Halkvakt uses Instagram/Facebook and Zoho Mail ---------
+# Fill in the IDs, set the env vars (see README), and flip enabled = true.
+# You can then disable the sample sources above.
+
+[[sources]]
+name = "meta"
+type = "meta"
+enabled = false
+facebook_page_id = "YOUR_PAGE_ID"
+instagram_user_id = "YOUR_IG_BUSINESS_ACCOUNT_ID"
+token_env = "META_ACCESS_TOKEN"
+max_posts = 25
+since_days = 14
+
+[[sources]]
+name = "zoho"
+type = "email"
+enabled = false
+max_messages = 200
+# Zoho Mail over IMAP. Host: imap.zoho.com (personal), imappro.zoho.com
+# (organisation accounts), or imap.zoho.eu / imappro.zoho.eu for EU data centre.
+imap = { host = "imappro.zoho.eu", user = "support@halkvakt.se", folder = "INBOX", since_days = 14, password_env = "ZOHO_APP_PASSWORD" }
 
 # [[sources]]
 # name = "gh"

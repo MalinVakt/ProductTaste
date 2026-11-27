@@ -50,6 +50,40 @@ Each `[[sources]]` block in `config.toml` is a plug-in:
 | `json` | JSON / JSONL exports, e.g. social listening tools | `items_key` for nested lists, dotted keys like `user.handle` |
 | `email` | Support inbox | `eml_dir`, `mbox` (Gmail Takeout, Thunderbird), or live `imap` with an app password |
 | `github_issues` | GitHub Issues as bug tracker | `repo`, `state`, `labels`; `GITHUB_TOKEN` for private repos |
+| `meta` | Instagram and Facebook comments | Comments and replies on recent posts, plus Instagram posts tagging the account; skips Halkvakt's own replies |
+
+### Connecting Halkvakt's live sources
+
+Halkvakt's feedback comes from **Instagram/Facebook** and **Zoho Mail**. Both
+blocks are in `config.example.toml` with `enabled = false`; fill them in and
+switch them on.
+
+**Zoho Mail (IMAP)**
+1. In Zoho Mail: Settings > Mail Accounts > IMAP Access, turn IMAP on.
+2. If the account has two-factor sign-in, create an app-specific password
+   (Zoho Accounts > Security > App Passwords).
+3. Set `user` and the right `host`: `imap.zoho.com` for personal accounts,
+   `imappro.zoho.com` for organisation accounts, or the `.eu` variants if the
+   account lives in Zoho's EU data centre.
+4. `export ZOHO_APP_PASSWORD=...`. The inbox is opened read-only and messages are
+   not marked as read.
+
+No IMAP? Export a folder from Zoho Mail as `.eml` files and point `eml_dir` at it.
+
+**Instagram and Facebook (Meta Graph API)**
+1. The Instagram account must be a professional (business or creator) account
+   linked to Halkvakt's Facebook Page.
+2. Create an app at developers.facebook.com, add the Instagram Graph API and
+   Facebook Login products.
+3. In the Graph API Explorer, generate a User token with `pages_show_list`,
+   `pages_read_engagement`, `pages_read_user_content`, `instagram_basic` and
+   `instagram_manage_comments`, exchange it for a long-lived token, then call
+   `GET /me/accounts` to get the **Page access token** and Page ID.
+4. `GET /{page-id}?fields=instagram_business_account` gives the Instagram ID.
+5. `export META_ACCESS_TOKEN=<page access token>` and fill in both IDs.
+
+For the GitHub Action, add `META_ACCESS_TOKEN` and `ZOHO_APP_PASSWORD` as
+repository secrets.
 
 Add a new source (Linear API, Zendesk, App Store reviews, X API...) by
 subclassing `Source` in `halkvakt_pm/sources/`, decorating it with

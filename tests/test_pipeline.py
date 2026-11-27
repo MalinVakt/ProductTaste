@@ -112,3 +112,34 @@ def test_dry_run(capsys):
     assert main(["--config", os.path.join(ROOT, "config.example.toml"), "--dry-run"]) == 0
     out = capsys.readouterr().out
     assert "support-email-001" in out
+
+
+def test_meta_source_reads_fb_and_ig_comments(monkeypatch):
+    from halkvakt_pm.sources import build_source
+
+    now = "2026-11-26T08:00:00+0000"
+    responses = {
+        "123/feed": {"data": [{"id": "123_1", "message": "Winter is here! Stay safe."}]},
+        "123_1/comments": {"data": [
+            {"id": "c1", "message": "Alerts come too late on my Android", "from": {"id": "9", "name": "Kim"},
+             "created_time": now, "like_count": 12},
+            {"id": "c2", "message": "Thanks Kim, we are on it", "from": {"id": "123", "name": "Halkvakt"},
+             "created_time": now},
+        ]},
+        "456": {"username": "halkvakt"},
+        "456/media": {"data": [{"id": "m1", "caption": "New feature!", "permalink": "https://instagram.com/p/x"}]},
+        "m1/comments": {"data": [
+            {"id": "i1", "text": "Please add cycle paths", "username": "bikerkalle", "timestamp": now,
+             "like_count": 3, "replies": {"data": [
+                 {"id": "i2", "text": "Noted!", "username": "halkvakt", "timestamp": now},
+                 {"id": "i3", "text": "Yes, sidewalks too", "username": "anna", "timestamp": now}]}},
+        ]},
+        "456/tags": {"data": []},
+    }
+    src = build_source({"type": "meta", "name": "meta", "facebook_page_id": "123", "instagram_user_id": "456",
+                        "since_days": 100000})
+    monkeypatch.setattr(src, "_get", lambda path, params: responses[path])
+    items = list(src.fetch())
+    assert [i.id for i in items] == ["meta-fb-c1", "meta-ig-i1", "meta-ig-i3"]
+    assert items[0].meta["on_post"] == "Winter is here! Stay safe." and items[0].meta["likes"] == 12
+    assert items[1].source == "instagram:@halkvakt"
